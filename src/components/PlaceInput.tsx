@@ -21,13 +21,13 @@ export default function PlaceInput({
   const [manualInput, setManualInput] = useState('')
 
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    // const apiKey = 'AIzaSyCdswSPRMnfpxUSyjcfpQu152ENQ-l8j0g';
 
-    // Check if API key is set
-    if (!apiKey || apiKey === 'your_google_maps_api_key_here') {
-      setHasApiKey(false)
-      return
-    }
+    // // Check if API key is set
+    // if (!apiKey || apiKey === 'your_google_maps_api_key_here') {
+    //   setHasApiKey(false)
+    //   return
+    // }
 
     setHasApiKey(true)
 

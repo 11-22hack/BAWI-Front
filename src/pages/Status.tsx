@@ -12,7 +12,7 @@ export default function Status() {
   const [result, setResult] = useState<ResultResponse | null>(null)
 
   const { stopPolling } = usePolling(
-    () => resultApi.getResult(requestId!),
+    () => resultApi.getResult({ id: requestId! }),
     {
       enabled: !!requestId,
       interval: 10000,

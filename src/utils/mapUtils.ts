@@ -36,7 +36,7 @@ export const getGoogleRoute = async (
           if (status === 'OK' && result) {
             const route = result.routes[0]
             const leg = route.legs[0]
-            
+
             const overviewPolyline = route.overview_polyline
             const pathPoints: Coordinates[] = []
             if (route.overview_path) {
@@ -65,26 +65,26 @@ export const getGoogleRoute = async (
   // Try WALKING first, then DRIVING, then Linear fallback
   try {
     return await requestRoute(window.google.maps.TravelMode.WALKING)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.warn('Walking route failed:', error)
-    
+
     // If failed with ZERO_RESULTS (no walking path found), try DRIVING
-    if (error.message && error.message.includes('ZERO_RESULTS')) {
+    if (error instanceof Error && error.message && error.message.includes('ZERO_RESULTS')) {
       try {
         return await requestRoute(window.google.maps.TravelMode.DRIVING)
-      } catch (drivingError: any) {
+      } catch (drivingError: unknown) {
         console.warn('Driving route failed:', drivingError)
-        
+
         // If driving also fails with ZERO_RESULTS (likely very close), fallback to linear path
-        if (drivingError.message && drivingError.message.includes('ZERO_RESULTS')) {
+        if (drivingError instanceof Error && drivingError.message && drivingError.message.includes('ZERO_RESULTS')) {
           console.log('Fallback to linear path due to ZERO_RESULTS')
-          
+
           const distance = calculateLinearDistance(start, end)
-          
+
           // For very short distances, create a simple straight line path
           // Add a few intermediate points for smoother visualization if needed
           const pathPoints = [start, end]
-          
+
           return {
             polyline: '', // Empty polyline string, Map component will use pathPoints
             distance: Math.round(distance),

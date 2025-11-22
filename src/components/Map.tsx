@@ -19,19 +19,19 @@ export default function Map({
   className = 'w-full h-full',
 }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
-  const mapInstanceRef = useRef<any>(null) // google.maps.Map
+  const mapInstanceRef = useRef<google.maps.Map | null>(null) // google.maps.Map
   const [isLoaded, setIsLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentZoom, setCurrentZoom] = useState(16) // 줌 레벨 약간 확대
-  const markersRef = useRef<any[]>([]) // google.maps.Marker[]
-  const polylineRef = useRef<any>(null) // google.maps.Polyline
-  const boundaryPolygonRef = useRef<any>(null) // google.maps.Polygon
+  const markersRef = useRef<google.maps.Marker[]>([]) // google.maps.Marker[]
+  const polylineRef = useRef<google.maps.Polyline | null>(null) // google.maps.Polyline
+  const boundaryPolygonRef = useRef<google.maps.Polygon | null>(null) // google.maps.Polygon
   const hasFittedBoundsRef = useRef(false) // fitBounds가 실행되었는지 추적
   const lastPathDataRef = useRef<string>('') // 마지막 경로 데이터 추적
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-    
+
     // Check if API key is set
     if (!apiKey || apiKey === 'your_google_maps_api_key_here') {
       setError('Google Maps API 키가 설정되지 않았습니다. .env 파일에 VITE_GOOGLE_MAPS_API_KEY를 설정해주세요.')
@@ -196,7 +196,7 @@ export default function Map({
       try {
         console.log('Creating start marker at:', start)
         const startPosition = new window.google.maps.LatLng(start.lat, start.lng)
-        
+
         const startMarker = new window.google.maps.Marker({
           position: startPosition,
           map: map,
@@ -219,7 +219,7 @@ export default function Map({
           optimized: false, // 최적화 비활성화로 확실한 표시
           animation: window.google.maps.Animation.DROP,
         })
-        
+
         // 마커가 지도에 확실히 표시되도록 보장
         startMarker.setMap(map)
         markersRef.current.push(startMarker)
@@ -236,7 +236,7 @@ export default function Map({
       try {
         console.log('Creating end marker at:', end)
         const endPosition = new window.google.maps.LatLng(end.lat, end.lng)
-        
+
         const endMarker = new window.google.maps.Marker({
           position: endPosition,
           map: map,
@@ -259,7 +259,7 @@ export default function Map({
           optimized: false, // 최적화 비활성화로 확실한 표시
           animation: window.google.maps.Animation.DROP,
         })
-        
+
         // 마커가 지도에 확실히 표시되도록 보장
         endMarker.setMap(map)
         markersRef.current.push(endMarker)
@@ -280,7 +280,7 @@ export default function Map({
     // 경로 데이터가 변경되었는지 확인
     const currentPathData = polyline || (pathPoints ? JSON.stringify(pathPoints) : '')
     const pathChanged = currentPathData !== lastPathDataRef.current
-    
+
     if (pathChanged) {
       lastPathDataRef.current = currentPathData
       hasFittedBoundsRef.current = false // 새로운 경로이므로 fitBounds 허용
@@ -288,7 +288,7 @@ export default function Map({
 
     if (polyline || pathPoints) {
       const hasPathPoints = pathPoints && pathPoints.length > 0
-      
+
       if (hasPathPoints || (polyline && polyline.length > 0)) {
         const path = hasPathPoints
           ? pathPoints!.map((p) => new window.google.maps.LatLng(p.lat, p.lng))
@@ -353,7 +353,7 @@ export default function Map({
         map.setZoom(15)
       }
     }
-    
+
     // 모든 경우에 확대/축소 및 이동이 작동하도록 보장 (항상 실행)
     if (mapInstanceRef.current) {
       mapInstanceRef.current.setOptions({
@@ -365,7 +365,7 @@ export default function Map({
         keyboardShortcuts: true,
       })
     }
-  }, [isLoaded, center, start, end, polyline, pathPoints])
+  }, [isLoaded, center, start, end, polyline, pathPoints, currentZoom])
 
   if (error) {
     return (
@@ -373,7 +373,7 @@ export default function Map({
         <div className="flex flex-col items-center justify-center w-full h-full min-h-[300px] lg:min-h-[400px] bg-gray-100 rounded-lg p-4">
           <div className="text-red-600 font-medium mb-2 text-lg">⚠️ 지도를 불러올 수 없습니다</div>
           <div className="text-sm text-gray-700 text-center max-w-md mb-4">{error}</div>
-          
+
           <div className="bg-white rounded-lg p-4 max-w-md w-full text-left text-xs text-gray-600 space-y-2 border border-gray-300">
             <div className="font-semibold text-gray-800 mb-2">확인 사항:</div>
             <div>1. Google Cloud Console에서 다음 API가 활성화되었는지 확인:</div>
@@ -401,16 +401,16 @@ export default function Map({
 
   const handleFitBounds = () => {
     if (!mapInstanceRef.current) return
-    
+
     const map = mapInstanceRef.current
     const bounds = new window.google.maps.LatLngBounds()
-    
+
     if (start) bounds.extend(start)
     if (end) bounds.extend(end)
     if (pathPoints && pathPoints.length > 0) {
       pathPoints.forEach((p) => bounds.extend(p))
     }
-    
+
     if (start || end || (pathPoints && pathPoints.length > 0)) {
       map.fitBounds(bounds)
       // 약간의 패딩 추가
@@ -425,7 +425,7 @@ export default function Map({
   return (
     <div className={`relative ${className}`}>
       <div ref={mapRef} className="w-full h-full min-h-[300px] lg:min-h-[400px] rounded-lg" />
-      
+
       {/* 커스텀 컨트롤 버튼들 */}
       {isLoaded && (
         <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
@@ -442,7 +442,7 @@ export default function Map({
               <span className="text-xs">경로 맞추기</span>
             </button>
           )}
-          
+
           {/* 확대/축소 레벨 표시 (제거됨) */}
         </div>
       )}

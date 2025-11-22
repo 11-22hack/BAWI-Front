@@ -9,7 +9,7 @@ export default function Result() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
-  
+
   // Preview에서 넘겨준 videoUrl 확인
   const stateVideoUrl = location.state?.videoUrl
   const [videoUrl, setVideoUrl] = useState<string | null>(stateVideoUrl || null)
@@ -29,10 +29,10 @@ export default function Result() {
 
   // 메타데이터 조회 (videoUrl이 있고 blob URL이 아닐 때만)
   const isBlobUrl = videoUrl?.startsWith('blob:')
-  
+
   const { data: metaData } = useQuery({
     queryKey: ['meta', videoUrl],
-    queryFn: () => metaApi.getMeta(videoUrl!),
+    queryFn: () => metaApi.getMeta({ url: videoUrl! }),
     enabled: !!videoUrl && !isBlobUrl // Blob URL이면 메타데이터 조회 스킵
   })
 
@@ -98,7 +98,7 @@ export default function Result() {
             <span>←</span> 홈으로 돌아가기
           </button>
         </div>
-        
+
         <VideoPlayer videoUrl={videoUrl} />
 
         {/* 메타데이터 표시 */}

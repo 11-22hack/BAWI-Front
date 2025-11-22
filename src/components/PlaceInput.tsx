@@ -8,27 +8,21 @@ interface PlaceInputProps {
   placeholder?: string
 }
 
-declare global {
-  interface Window {
-    google: typeof google
-  }
-}
-
 export default function PlaceInput({
   label,
   value,
   onChange,
   placeholder = '주소 또는 장소를 입력하세요',
-}: PlaceInputProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const autocompleteRef = useRef<any>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
+  }: PlaceInputProps) {
+    const inputRef = useRef<HTMLInputElement>(null)
+    const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
+    const [isLoaded, setIsLoaded] = useState(false)
   const [hasApiKey, setHasApiKey] = useState(false)
   const [manualInput, setManualInput] = useState('')
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-    
+
     // Check if API key is set
     if (!apiKey || apiKey === 'your_google_maps_api_key_here') {
       setHasApiKey(false)
@@ -62,7 +56,7 @@ export default function PlaceInput({
         if (checkInterval) clearInterval(checkInterval)
         return
       }
-      
+
       if (attempts >= maxAttempts) {
         console.warn('Google Maps Places API load timeout')
         if (checkInterval) clearInterval(checkInterval)
@@ -134,7 +128,7 @@ export default function PlaceInput({
           if (place?.place_id && place.geometry?.location) {
             // 건물 이름(name)을 최우선으로 사용, 없으면 주소 사용
             const displayName = place.name || place.formatted_address || ''
-            
+
             onChange({
               description: displayName,
               placeId: place.place_id,
@@ -183,7 +177,7 @@ export default function PlaceInput({
         onChange={(e) => {
           const inputValue = e.target.value
           setManualInput(inputValue)
-          
+
           if (!inputValue) {
             onChange(null)
             return

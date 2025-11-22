@@ -17,6 +17,8 @@ RUN npm ci
 
 # 소스 코드 복사 및 빌드
 COPY . .
+# Dokploy 환경 변수를 .env 파일로 저장
+RUN printenv > .env
 RUN npm run build
 
 # Production Stage

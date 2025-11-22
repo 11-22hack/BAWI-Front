@@ -30,13 +30,13 @@ export default function Map({
   const lastPathDataRef = useRef<string>('') // 마지막 경로 데이터 추적
 
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    const apiKey = 'AIzaSyCdswSPRMnfpxUSyjcfpQu152ENQ-l8j0g';
 
-    // Check if API key is set
-    if (!apiKey || apiKey === 'your_google_maps_api_key_here') {
-      setError('Google Maps API 키가 설정되지 않았습니다. .env 파일에 VITE_GOOGLE_MAPS_API_KEY를 설정해주세요.')
-      return
-    }
+    // // Check if API key is set
+    // if (!apiKey || apiKey === 'your_google_maps_api_key_here') {
+    //   setError('Google Maps API 키가 설정되지 않았습니다. .env 파일에 VITE_GOOGLE_MAPS_API_KEY를 설정해주세요.')
+    //   return
+    // }
 
     // Load Google Maps script
     if (window.google?.maps) {

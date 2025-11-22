@@ -34,4 +34,5 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # 8080 포트 노출
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["sleep", "infinity"]
+# CMD ["nginx", "-g", "daemon off;"]

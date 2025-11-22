@@ -1,5 +1,7 @@
 # BAWI - 안전한 밤길 귀가를 돕는 서비스
 
+🔗 DEMO-LINK: https://hackathon-front.croksuter.com/
+
 BAWI는 사용자의 안전한 귀가를 돕기 위해 최적의 경로와 실시간 영상을 제공하는 서비스입니다. Google Maps API를 활용하여 경로를 시각화하고, 생성형 AI를 통해 경로에 대한 사전 영상을 생성하여 보여줍니다.
 
 ## 주요 기능
